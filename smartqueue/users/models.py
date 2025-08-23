@@ -44,35 +44,35 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractUser):
     """
-    Custom User model extending AbstractUser with role-based authentication.
+    Custom User model with role-based authentication and additional fields.
     """
-    ROLE_CHOICES = (
-            ('admin', 'Admin'),
-            ('doctor', 'Doctor'),
-            ('nurse', 'Nurse'),
-            ('patient', 'Patient'),
-        )
-    
-    # Base fields
+    ROLE_CHOICES = [
+        ('admin', 'Admin'),
+        ('doctor', 'Doctor'),
+        ('nurse', 'Nurse'),
+        ('patient', 'Patient'),
+    ]
+
     email = models.EmailField(_('email address'), unique=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     created_at = models.DateTimeField(default=timezone.now)
-    
-    # Additional fields from your CustomUser
     date_of_birth = models.DateField(null=True, blank=True, help_text="Enter your date of birth")
     profile_photo = models.ImageField(
-        upload_to='profile_photos/', 
-        null=True, 
-        blank=True, 
+        upload_to='profile_photos/',
+        null=True,
+        blank=True,
         help_text="Upload a profile photo"
     )
-    
+
     objects = CustomUserManager()
+ 
     
+
     class Meta:
+        swappable = 'AUTH_USER_MODEL'
         verbose_name = "User"
         verbose_name_plural = "Users"
-    
+
     def __str__(self):
         return self.username
 

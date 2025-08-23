@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'rest_framework.authtoken',  # Add token authentication
     'django_filters',
+    'departments',
+    'queues',
 ]
 
 MIDDLEWARE = [
@@ -80,7 +82,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'smartqueue.wsgi.application'
 
-
+INTERNAL_IPS = [
+    # ... '127.0.0.1',
+    '127.0.0.1',
+    'localhost',
+]
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -128,6 +134,17 @@ STATIC_URL = 'static/'   # URL to use when referring to static files
 MEDIA_URL = '/media/'    # URL to use when referring to media files
 MEDIA_ROOT = BASE_DIR / 'media'  # Directory to store uploaded media files
 
+# settings.py
+# STATIC_URL = '/static/'
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# STATIC_URL = '/static/'
+# STATICFILES_DIRS = [BASE_DIR / "blog" / "static"]
+# STATIC_ROOT = BASE_DIR / "staticfiles"   # useful for collectstatic in production
+
+
+
 # Custom user model
 AUTH_USER_MODEL = 'users.CustomUser'  # Reference to custom user model
 
@@ -153,7 +170,13 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'user': '100/hour',  # 100 requests/hour for authenticated users
         'anon': '5/hour',    # 5 requests/hour for non-logged-in users
+        'queue_join': '3/hour',  # 3 requests/hour to join a queue
     },
+     'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
 }
 
 # Simple JWT configuration
