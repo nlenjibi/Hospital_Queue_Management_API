@@ -1,0 +1,214 @@
+{
+  "register": {
+    "endpoint": "/api/auth/register/",
+    "method": "POST",
+    "request": {
+      "username": "john_doe",
+      "email": "john@example.com",
+      "password": "StrongPassword123!",
+      "password_confirm": "StrongPassword123!",
+      "first_name": "John",
+      "last_name": "Doe",
+      "phone_number": "1234567890",
+      "role": "patient",
+      "date_of_birth": "1990-01-01"
+    },
+    "response": {
+      "user": {
+        "id": 1,
+        "username": "john_doe",
+        "email": "john@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "phone_number": "1234567890",
+        "role": "patient",
+        "created_at": "2025-08-27T12:00:00Z",
+        "updated_at": "2025-08-27T12:00:00Z"
+      },
+      "refresh": "<refresh_token>",
+      "access": "<access_token>"
+    }
+  },
+  "login": {
+    "endpoint": "/api/auth/login/",
+    "method": "POST",
+    "request": {
+      "email": "john@example.com",
+      "password": "StrongPassword123!"
+    },
+    "response": {
+      "user": {
+        "id": 1,
+        "username": "john_doe",
+        "email": "john@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "phone_number": "1234567890",
+        "role": "patient",
+        "created_at": "2025-08-27T12:00:00Z",
+        "updated_at": "2025-08-27T12:00:00Z"
+      },
+      "refresh": "<refresh_token>",
+      "access": "<access_token>"
+    }
+  },
+  "token_refresh": {
+    "endpoint": "/api/auth/token/refresh/",
+    "method": "POST",
+    "request": {
+      "refresh": "<refresh_token>"
+    },
+    "response": {
+      "access": "<new_access_token>"
+    }
+  },
+  "patient_profile": {
+    "endpoint": "/api/auth/profile/patient/",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Bearer <access_token>"
+    },
+    "response": {
+      "id": 1,
+      "user": {
+        "id": 1,
+        "username": "john_doe",
+        "email": "john@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "phone_number": "1234567890",
+        "role": "patient",
+        "created_at": "2025-08-27T12:00:00Z",
+        "updated_at": "2025-08-27T12:00:00Z"
+      },
+      "medical_id": "MED000001",
+      "priority_level": "walk_in",
+      "date_of_birth": "1990-01-01",
+      "emergency_contact": "",
+      "address": "",
+      "allergies": "",
+      "notes": ""
+    }
+  },
+  "user_profile": {
+    "endpoint": "/api/auth/profile/user/",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Bearer <access_token>"
+    },
+    "response": {
+      "id": 1,
+      "username": "john_doe",
+      "email": "john@example.com",
+      "first_name": "John",
+      "last_name": "Doe",
+      "phone_number": "1234567890",
+      "role": "patient",
+      "created_at": "2025-08-27T12:00:00Z",
+      "updated_at": "2025-08-27T12:00:00Z"
+    }
+  },
+  "user_detail": {
+    "endpoint": "/api/auth/user/1/",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Bearer <access_token>"
+    },
+    "response": {
+      "id": 1,
+      "username": "john_doe",
+      "email": "john@example.com",
+      "first_name": "John",
+      "last_name": "Doe",
+      "phone_number": "1234567890",
+      "role": "patient",
+      "created_at": "2025-08-27T12:00:00Z",
+      "updated_at": "2025-08-27T12:00:00Z"
+    }
+  },
+  "patient_detail": {
+    "endpoint": "/api/auth/patient/1/",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Bearer <access_token>"
+    },
+    "response": {
+      "id": 1,
+      "user": {
+        "id": 1,
+        "username": "john_doe",
+        "email": "john@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "phone_number": "1234567890",
+        "role": "patient",
+        "created_at": "2025-08-27T12:00:00Z",
+        "updated_at": "2025-08-27T12:00:00Z"
+      },
+      "medical_id": "MED000001",
+      "priority_level": "walk_in",
+      "date_of_birth": "1990-01-01",
+      "emergency_contact": "",
+      "address": "",
+      "allergies": "",
+      "notes": ""
+    }
+  },
+  "user_list": {
+    "endpoint": "/api/auth/users/",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Bearer <access_token>"
+    },
+    "response": [
+      {
+        "id": 1,
+        "username": "john_doe",
+        "email": "john@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "phone_number": "1234567890",
+        "role": "patient",
+        "created_at": "2025-08-27T12:00:00Z",
+        "updated_at": "2025-08-27T12:00:00Z"
+      },
+      {
+        "id": 2,
+        "username": "dr_smith",
+        "email": "smith@hospital.com",
+        "first_name": "Anna",
+        "last_name": "Smith",
+        "phone_number": "9876543210",
+        "role": "doctor",
+        "created_at": "2025-08-27T12:00:00Z",
+        "updated_at": "2025-08-27T12:00:00Z"
+      }
+    ]
+  },
+  "patient_list": {
+    "endpoint": "/api/auth/patients/",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Bearer <access_token>"
+    },
+    "response": [
+      {
+        "id": 1,
+        "user": {
+          "id": 1,
+          "username": "john_doe",
+          "email": "john@example.com",
+          "first_name": "John",
+          "last_name": "Doe",
+          "phone_number": "1234567890",
+          "role": "patient",
+          "created_at": "2025-08-27T12:00:00Z",
+          "updated_at": "2025-08-27T12:00:00Z"
+        },
+        "medical_id": "MED000001",
+        "priority_level": "walk_in",
+        "date_of_birth": "1990-01-01"
+      }
+    ]
+  }
+}

@@ -171,11 +171,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
-# Simple JWT configuration
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Access token valid for 30 minutes
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Refresh token valid for 1 day
-}
 # Redirect URLs after login/logout
 LOGIN_REDIRECT_URL = "/"  # Redirect to home after successful login
 LOGOUT_REDIRECT_URL = "/"  # Redirect to home after logout
@@ -191,8 +186,8 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']  # Add your domain in produc
 
 # JWT Configuration
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
     'ROTATE_REFRESH_TOKENS': True,
 }
 
