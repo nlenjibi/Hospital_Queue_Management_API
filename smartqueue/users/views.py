@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate
 from .models import User, Patient
 from .serializers import UserRegistrationSerializer, LoginSerializer, UserSerializer, PatientSerializer
 from rest_framework.decorators import action
+import users.permissions as custom_permissions
 # Throttles
 class RegisterThrottle(UserRateThrottle):
     rate = '10/min'
@@ -57,7 +58,7 @@ class LoginView(TokenObtainPairView):
 # Patient Profile View
 class PatientProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = PatientSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, custom_permissions.IsPatient, custom_permissions.IsSelfOrAdmin]
 
     def get_object(self):
         return Patient.objects.get(user=self.request.user)
@@ -65,7 +66,7 @@ class PatientProfileView(generics.RetrieveUpdateAPIView):
 # User Profile View
 class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, custom_permissions.IsSelfOrAdmin]
 
     def get_object(self):
         return self.request.user
@@ -73,12 +74,12 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, custom_permissions.IsAdminUserOrReadOnly]
 
 class PatientListView(generics.ListAPIView):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, custom_permissions.IsAdminUserOrReadOnly]
 
 class PatientDetailView(generics.RetrieveAPIView):
     queryset = Patient.objects.all()
@@ -88,4 +89,4 @@ class PatientDetailView(generics.RetrieveAPIView):
 class UserDetailView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, custom_permissions.IsSelfOrAdmin]

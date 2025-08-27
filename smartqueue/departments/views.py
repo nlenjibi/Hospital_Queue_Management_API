@@ -1,7 +1,7 @@
 # departments/views.py
 from rest_framework import generics, permissions
 from .models import Department, DepartmentStaff
-from .serializers import DepartmentSerializer, DepartmentStaffSerializer
+from ..hospital.serializers import DepartmentSerializer, DepartmentStaffSerializer
 
 class DepartmentList(generics.ListAPIView):
     queryset = Department.objects.filter(is_active=True)
