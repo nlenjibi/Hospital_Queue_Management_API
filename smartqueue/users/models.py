@@ -1,4 +1,3 @@
-
 # models.py
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
@@ -42,7 +41,7 @@ class CustomUserManager(BaseUserManager):
         
         return self.create_user(username, email, password, **extra_fields)
 
-class CustomUser(AbstractUser):
+class User(AbstractUser):
     """
     Custom User model with role-based authentication and additional fields.
     """
@@ -51,19 +50,19 @@ class CustomUser(AbstractUser):
         ('doctor', 'Doctor'),
         ('nurse', 'Nurse'),
         ('patient', 'Patient'),
+         ('staff', 'Staff'),
     ]
 
     email = models.EmailField(_('email address'), unique=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
-    created_at = models.DateTimeField(default=timezone.now)
-    date_of_birth = models.DateField(null=True, blank=True, help_text="Enter your date of birth")
-    profile_photo = models.ImageField(
-        upload_to='profile_photos/',
-        null=True,
-        blank=True,
-        help_text="Upload a profile photo"
-    )
+  
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='patient')
+    phone_number = models.CharField(max_length=15, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
+    created_at = models.DateTimeField(default=timezone.now)
+   
+  
     objects = CustomUserManager()
  
     
@@ -76,3 +75,37 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 
+
+
+class Patient(models.Model):
+    """
+    Patient profile linked to a User account.
+    Stores medical and contact information.
+    """
+    PRIORITY_EMERGENCY = 'emergency'
+    PRIORITY_APPOINTMENT = 'appointment'
+    PRIORITY_WALK_IN = 'walk_in'
+
+    PRIORITY_CHOICES = [
+        (PRIORITY_EMERGENCY, 'Emergency'),
+        (PRIORITY_APPOINTMENT, 'Appointment'),
+        (PRIORITY_WALK_IN, 'Walk-in'),
+    ]
+
+    user = models.OneToOneField('users.User', on_delete=models.CASCADE, related_name='patient_profile')
+    medical_id = models.CharField(max_length=20, unique=True)
+    priority_level = models.CharField(max_length=15, choices=PRIORITY_CHOICES, default=PRIORITY_WALK_IN)
+    date_of_birth = models.DateField(null=True, blank=True)
+    emergency_contact = models.CharField(max_length=15, blank=True)
+    address = models.TextField(blank=True)
+    allergies = models.TextField(
+        blank=True,
+        help_text="List any known allergies (e.g., medications, foods, environmental). Leave blank if none."
+    )
+    notes = models.TextField(
+        blank=True,
+        help_text="Additional notes or comments about the patient. For medical history, instructions, or staff remarks."
+    )
+
+    def __str__(self):
+        return f"{self.user.get_full_name()} - {self.medical_id}"

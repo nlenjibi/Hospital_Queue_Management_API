@@ -10,9 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-from datetime import timedelta
 from pathlib import Path
-
+import os
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,6 +29,7 @@ SECRET_KEY = 'django-insecure-)#ed^pdgjv#s61307#c!+2d9p!cfp-6ryyiph0xg(r-i@+es4v
 # ALLOWED_HOSTS = []
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,18 +41,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'corsheaders',
     'users',
     'hospital',
-    'debug_toolbar',
-    'rest_framework.authtoken',  # Add token authentication
-    'django_filters',
-    'departments',
     'queues',
+    'labs',
+    'notifications',
+    'debug_toolbar',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
-    'csp.middleware.CSPMiddleware',
+    
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'smartqueue.security_middleware.SecurityMiddleware',  # Custom security middleware
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -126,27 +129,15 @@ TIME_ZONE = 'UTC'        # Default timezone
 USE_I18N = True          # Enable Django's internationalization system
 USE_TZ = True            # Enable timezone-aware datetimes
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+
 STATIC_URL = 'static/'   # URL to use when referring to static files
 
 # Media files (User uploaded files)
 MEDIA_URL = '/media/'    # URL to use when referring to media files
 MEDIA_ROOT = BASE_DIR / 'media'  # Directory to store uploaded media files
 
-# settings.py
-# STATIC_URL = '/static/'
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# STATIC_URL = '/static/'
-# STATICFILES_DIRS = [BASE_DIR / "blog" / "static"]
-# STATIC_ROOT = BASE_DIR / "staticfiles"   # useful for collectstatic in production
-
-
-
 # Custom user model
-AUTH_USER_MODEL = 'users.CustomUser'  # Reference to custom user model
+AUTH_USER_MODEL = 'users.User'  # Reference to custom user model
 
 # Argon2 password hasher
 PASSWORD_HASHERS = [
@@ -197,31 +188,26 @@ LOGOUT_REDIRECT_URL = "/"  # Redirect to home after logout
 DEBUG = True  # Set to False in production for security
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']  # Add your domain in production
 
-# Security Middleware Configuration
-SECURE_BROWSER_XSS_FILTER = True  # Enable browser XSS protection
-SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent the browser from guessing content types
-X_FRAME_OPTIONS = 'DENY'  # Prevent site from being rendered in a frame (clickjacking protection)
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Use this header to determine SSL status when behind a proxy
+# JWT Configuration
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+}
 
-# CSRF cookie settings
-CSRF_COOKIE_SECURE = False  # Set to True in production to send CSRF cookie only over HTTPS
-CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript access to CSRF cookie
-CSRF_COOKIE_SAMESITE = 'Strict'  # Restrict CSRF cookie to same-site requests
+# CORS settings for React frontend
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
 
-# Session cookie settings
-SESSION_COOKIE_SECURE = False  # Set to True in production to send session cookie only over HTTPS
-SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to session cookie
-SESSION_COOKIE_SAMESITE = 'Strict'  # Restrict session cookie to same-site requests
-SESSION_COOKIE_AGE = 3600  # Session cookie lifetime in seconds (1 hour)
+CORS_ALLOW_CREDENTIALS = True
 
-SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'  # Control information sent in Referer header
-
-# Additional Security Headers
-SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
-# Content Security Policy (CSP) settings are not natively supported by Django.
-# To enforce CSP, use a third-party package like 'django-csp' and configure it accordingly.
-
+# Twilio Configuration
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
+TWILIO_PHONE_NUMBER = os.environ.get('TWILIO_PHONE_NUMBER')
 
 # Logging Configuration for Security Monitoring
 LOGGING = {
