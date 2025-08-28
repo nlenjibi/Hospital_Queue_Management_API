@@ -1,0 +1,19 @@
+# Ignore Python package lock files
+Pipfile.lock
+poetry.lock
+
+# Ignore pip install log files
+pip-log.txt
+
+# Ignore virtual environments
+venv/
+.env/
+*.env
+
+# Ignore __pycache__ and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Django static
