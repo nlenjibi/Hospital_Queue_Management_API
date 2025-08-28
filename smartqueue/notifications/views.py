@@ -2,6 +2,75 @@ from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from .models import Notification, NotificationPreference
+from .serializers import NotificationSerializer, NotificationPreferenceSerializer
+from .services import NotificationService
+from .permissions import CanSendNotification, CanViewNotification, CanManageNotificationPreferences
+
+class NotificationListView(generics.ListAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated, CanViewNotification]
+
+    def get_queryset(self):
+        user = self.request.user
+        # Staff/admin can view all, patients only their own
+        if getattr(user, 'role', None) in ['staff', 'admin', 'superadmin']:
+            return Notification.objects.all()
+        return Notification.objects.filter(user=user)
+
+class NotificationDetailView(generics.RetrieveAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated, CanViewNotification]
+    queryset = Notification.objects.all()
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, CanSendNotification])
+def send_notification(request):
+    """Create and send a notification"""
+    user_id = request.data.get('user_id')
+    notification_type = request.data.get('type')
+    title = request.data.get('title')
+    message = request.data.get('message')
+    channel = request.data.get('channel', 'sms')
+    scheduled_for = request.data.get('scheduled_for')
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    user = User.objects.filter(id=user_id).first()
+    if not user:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    service = NotificationService()
+    notification = service.create_and_send_notification(
+        user=user,
+        notification_type=notification_type,
+        title=title,
+        message=message,
+        channel=channel,
+        scheduled_for=scheduled_for
+    )
+    return Response(NotificationSerializer(notification).data, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, CanViewNotification])
+def mark_notification_read(request, pk):
+    """Mark a notification as read"""
+    notification = Notification.objects.filter(id=pk, user=request.user).first()
+    if not notification:
+        return Response({'error': 'Notification not found'}, status=status.HTTP_404_NOT_FOUND)
+    from django.utils import timezone
+    notification.read_at = timezone.now()
+    notification.save()
+    return Response({'message': 'Notification marked as read'})
+
+class NotificationPreferenceView(generics.RetrieveUpdateAPIView):
+    serializer_class = NotificationPreferenceSerializer
+    permission_classes = [IsAuthenticated, CanManageNotificationPreferences]
+
+    def get_object(self):
+        return NotificationPreference.objects.get(user=self.request.user)
+from rest_framework import generics, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from django.utils import timezone
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt

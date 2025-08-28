@@ -1,0 +1,176 @@
+{
+  "examples": [
+    {
+      "endpoint": "/notifications/notifications/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "params": {"type": "queue_update", "status": "sent", "unread": "true"}
+      },
+      "response": {
+        "status": 200,
+        "body": [
+          {
+            "id": 1,
+            "type": "queue_update",
+            "channel": "sms",
+            "title": "Queue Update",
+            "message": "You are now number 2 in the queue.",
+            "status": "sent",
+            "sent_at": "2025-08-28T09:00:00Z",
+            "delivered_at": "2025-08-28T09:01:00Z",
+            "read_at": null,
+            "is_read": false,
+            "retry_count": 0,
+            "created_at": "2025-08-28T08:59:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "endpoint": "/notifications/notifications/send/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "body": {
+          "user_id": 1,
+          "type": "appointment_reminder",
+          "title": "Appointment Reminder",
+          "message": "Your appointment is at 10:00 AM.",
+          "channel": "email"
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": {
+          "id": 2,
+          "type": "appointment_reminder",
+          "channel": "email",
+          "title": "Appointment Reminder",
+          "message": "Your appointment is at 10:00 AM.",
+          "status": "sent",
+          "sent_at": "2025-08-28T09:05:00Z",
+          "delivered_at": null,
+          "read_at": null,
+          "is_read": false,
+          "retry_count": 0,
+          "created_at": "2025-08-28T09:05:00Z"
+        }
+      }
+    },
+    {
+      "endpoint": "/notifications/notifications/1/read/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"message": "Notification marked as read"}
+      }
+    },
+    {
+      "endpoint": "/notifications/notifications/mark-all-read/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"message": "5 notifications marked as read"}
+      }
+    },
+    {
+      "endpoint": "/notifications/notifications/unread-count/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"unread_count": 3}
+      }
+    },
+    {
+      "endpoint": "/notifications/preferences/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "queue_updates": "sms",
+          "appointment_reminders": "email",
+          "delay_alerts": "sms",
+          "test_results": "email",
+          "reminder_minutes_before": 15,
+          "quiet_hours_start": "22:00:00",
+          "quiet_hours_end": "08:00:00"
+        }
+      }
+    },
+    {
+      "endpoint": "/notifications/preferences/",
+      "method": "PUT",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "body": {
+          "queue_updates": "email",
+          "appointment_reminders": "email",
+          "delay_alerts": "push",
+          "test_results": "email",
+          "reminder_minutes_before": 30,
+          "quiet_hours_start": "21:00:00",
+          "quiet_hours_end": "07:00:00"
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "queue_updates": "email",
+          "appointment_reminders": "email",
+          "delay_alerts": "push",
+          "test_results": "email",
+          "reminder_minutes_before": 30,
+          "quiet_hours_start": "21:00:00",
+          "quiet_hours_end": "07:00:00"
+        }
+      }
+    },
+    {
+      "endpoint": "/notifications/send-test/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "body": {"channel": "sms"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"message": "Test notification sent", "notification_id": 10}
+      }
+    },
+    {
+      "endpoint": "/notifications/twilio-webhook/",
+      "method": "POST",
+      "request": {
+        "form": {"MessageSid": "SM1234567890", "MessageStatus": "delivered"}
+      },
+      "response": {
+        "status": 200,
+        "body": {}
+      }
+    },
+    {
+      "endpoint": "/notifications/process-scheduled/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"message": "Scheduled notifications processed"}
+      }
+    }
+  ]
+}

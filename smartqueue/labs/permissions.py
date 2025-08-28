@@ -40,4 +40,4 @@ class CanViewLabResults(permissions.BasePermission):
         # obj is LabTest
         if getattr(request.user, 'role', None) == 'patient':
             return obj.patient.user == request.user
-        return getattr(request.user, 'role', None) in ['doctor', 'nurse',
+        return getattr(request.user, 'role', None) in ['doctor', 'nurse', 'staff', 'admin', 'superadmin']
