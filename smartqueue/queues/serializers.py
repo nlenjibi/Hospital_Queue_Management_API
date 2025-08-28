@@ -1,103 +1,85 @@
-# queues/serializers.py
 from rest_framework import serializers
-from .models import PatientQueue, QueueEntry
-from departments.models import Department
-from django.conf import settings
+from .models import Queue, QueueEntry, QueueAnalytics
+from users.serializers import PatientSerializer
+from hospital.serializers import DepartmentSerializer
 
-class DepartmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Department
-        fields = ['id', 'name', 'department_type', 'description']
-
+# Serializer for Queue model with department details and calculated fields
 class QueueSerializer(serializers.ModelSerializer):
     department = DepartmentSerializer(read_only=True)
-    department_id = serializers.PrimaryKeyRelatedField(
-        queryset=Department.objects.all(),
-        write_only=True,
-        source='department'
-    )
-    active_count = serializers.SerializerMethodField()
-    estimated_wait = serializers.SerializerMethodField()
+    current_length = serializers.ReadOnlyField()
+    estimated_wait_time = serializers.ReadOnlyField()
 
     class Meta:
-        model = PatientQueue
+        model = Queue
         fields = [
-            'id', 'department', 'department_id', 'current_position',
-            'is_active', 'max_capacity', 'estimated_wait_time',
-            'active_count', 'estimated_wait', 'created_at', 'updated_at'
+            'id', 'department', 'name', 'is_active', 'max_capacity',
+            'avg_processing_time', 'created_at', 'updated_at',
+            'current_length', 'estimated_wait_time'
         ]
-        read_only_fields = ['current_position', 'created_at', 'updated_at']
 
-    def get_active_count(self, obj):
-        return obj.get_active_count()
+# Serializer for creating/joining a queue entry with validation
+class QueueEntryCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QueueEntry
+        fields = ['patient', 'queue', 'status']
 
-    def get_estimated_wait(self, obj):
-        # Calculate estimated wait based on queue length and processing time
-        active_count = obj.get_active_count()
-        return active_count * obj.estimated_wait_time
+    def validate(self, data):
+        # Prevent duplicate active queue entry for the same patient in the same queue
+        patient = data.get('patient')
+        queue = data.get('queue')
+        if QueueEntry.objects.filter(
+            patient=patient,
+            queue=queue,
+            status__in=['waiting', 'in_progress']
+        ).exists():
+            raise serializers.ValidationError("Patient is already in this queue.")
+        return data
 
+    def create(self, validated_data):
+        # Optionally set patient from request context if not provided
+        request = self.context.get('request')
+        if request and request.user.is_authenticated and hasattr(request.user, 'patient_profile'):
+            validated_data['patient'] = request.user.patient_profile
+        return super().create(validated_data)
+
+# Serializer for QueueEntry model with patient and queue details
 class QueueEntrySerializer(serializers.ModelSerializer):
+    patient = PatientSerializer(read_only=True)
     queue = QueueSerializer(read_only=True)
-    queue_id = serializers.PrimaryKeyRelatedField(
-        queryset=PatientQueue.objects.all(),
-        write_only=True,
-        source='queue'
-    )
-    patient_name = serializers.CharField(source='patient.username', read_only=True)
-    patient_email = serializers.CharField(source='patient.email', read_only=True)
-    department_name = serializers.CharField(source='queue.department.name', read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
-    priority_display = serializers.CharField(source='get_priority_display', read_only=True)
+    position = serializers.IntegerField(read_only=True)
+    joined_at = serializers.DateTimeField(read_only=True)
+    called_at = serializers.DateTimeField(read_only=True)
+    completed_at = serializers.DateTimeField(read_only=True)
+    estimated_time = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = QueueEntry
         fields = [
-            'id', 'queue', 'queue_id', 'patient', 'patient_name', 'patient_email',
-            'priority', 'priority_display', 'status', 'status_display',
-            'position', 'department_name', 'joined_at', 'called_at', 'completed_at'
+            'id', 'patient', 'queue', 'status', 'status_display', 'position',
+            'joined_at', 'called_at', 'completed_at', 'estimated_time',
+            'actual_wait_time', 'consultation_start', 'notes'
         ]
-        read_only_fields = ['position', 'joined_at', 'called_at', 'completed_at']
 
-    def validate(self, data):
-        # Check if patient is already in an active queue
-        patient = data.get('patient')
-        queue = data.get('queue')
-        
-        if QueueEntry.objects.filter(
-            patient=patient,
-            queue=queue,
-            status__in=['waiting', 'processing']
-        ).exists():
-            raise serializers.ValidationError("Patient is already in this queue")
-        
-        return data
-
-    def create(self, validated_data):
-        # Set the patient from the request user if not provided
-        request = self.context.get('request')
-        if request and request.user.is_authenticated:
-            if request.user.role == 'patient':
-                validated_data['patient'] = request.user
-        
-        return super().create(validated_data)
-
-class QueueJoinSerializer(serializers.Serializer):
+# Serializer for joining a queue with priority (for custom endpoints)
+class JoinQueueSerializer(serializers.Serializer):
     queue_id = serializers.IntegerField()
-    priority = serializers.IntegerField(
-        min_value=0,
-        max_value=3,
-        default=2
+    priority = serializers.ChoiceField(
+        choices=[('emergency', 'Emergency'), ('appointment', 'Appointment'), ('walk_in', 'Walk-in')],
+        default='walk_in'
     )
 
     def validate_queue_id(self, value):
+        # Ensure queue exists and is active
         try:
-            queue = PatientQueue.objects.get(id=value, is_active=True)
-        except PatientQueue.DoesNotExist:
+            queue = Queue.objects.get(id=value, is_active=True)
+        except Queue.DoesNotExist:
             raise serializers.ValidationError("Queue not found or inactive")
         return value
 
+# Serializer for queue entry status and estimated wait
 class QueueStatusSerializer(serializers.ModelSerializer):
-    patient_name = serializers.CharField(source='patient.username', read_only=True)
+    patient_name = serializers.CharField(source='patient.user.username', read_only=True)
     current_position = serializers.IntegerField(source='position', read_only=True)
     estimated_wait = serializers.SerializerMethodField()
 
@@ -109,11 +91,23 @@ class QueueStatusSerializer(serializers.ModelSerializer):
         ]
 
     def get_estimated_wait(self, obj):
+        # Calculate estimated wait time for this entry
         queue = obj.queue
         active_ahead = QueueEntry.objects.filter(
             queue=queue,
-            status__in=['waiting', 'processing'],
-            priority__lte=obj.priority,
-            joined_at__lt=obj.joined_at
+            status='waiting',
+            position__lt=obj.position
         ).count()
-        return active_ahead * queue.estimated_wait_time
+        return active_ahead * queue.avg_processing_time
+
+# Serializer for queue analytics/statistics
+class QueueAnalyticsSerializer(serializers.ModelSerializer):
+    queue_name = serializers.CharField(source='queue.name', read_only=True)
+
+    class Meta:
+        model = QueueAnalytics
+        fields = [
+            'id', 'queue', 'queue_name', 'date', 'total_patients',
+            'avg_wait_time', 'avg_processing_time', 'no_show_count',
+            'peak_hour_start', 'peak_hour_end'
+        ]
