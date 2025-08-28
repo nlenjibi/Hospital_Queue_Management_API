@@ -1,0 +1,114 @@
+{
+  "examples": [
+    {
+      "endpoint": "/users/register/",
+      "method": "POST",
+      "request": {
+        "body": {
+          "username": "johndoe",
+          "password": "securepass123",
+          "email": "john@example.com",
+          "role": "patient"
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": {"id": 1, "username": "johndoe", "email": "john@example.com", "role": "patient"},"access": "<jwt_token>", "refresh": "<refresh_token>"
+      }
+    },
+    {
+      "endpoint": "/users/login/",
+      "method": "POST",
+      "request": {
+        "body": {"username": "johndoe", "password": "securepass123"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"access": "<jwt_token>", "refresh": "<refresh_token>"}
+      }
+    },
+    {
+      "endpoint": "/users/token/refresh/",
+      "method": "POST",
+      "request": {
+        "body": {"refresh": "<refresh_token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"access": "<new_jwt_token>"}
+      }
+    },
+    {
+      "endpoint": "/users/profile/patient/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"id": 1, "username": "johndoe", "role": "patient", "profile": {"age": 30, "gender": "male"}}
+      }
+    },
+    {
+      "endpoint": "/users/profile/user/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"id": 1, "username": "johndoe", "role": "patient", "email": "john@example.com"}
+      }
+    },
+    {
+      "endpoint": "/users/user/1/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"id": 1, "username": "johndoe", "role": "patient", "email": "john@example.com"}
+      }
+    },
+    {
+      "endpoint": "/users/patient/1/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"id": 1, "username": "johndoe", "role": "patient", "profile": {"age": 30, "gender": "male"}}
+      }
+    },
+    {
+      "endpoint": "/users/users/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": [
+          {"id": 1, "username": "johndoe", "role": "patient"},
+          {"id": 2, "username": "drsmith", "role": "doctor"}
+        ]
+      }
+    },
+    {
+      "endpoint": "/users/patients/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": [
+          {"id": 1, "username": "johndoe", "role": "patient"},
+          {"id": 3, "username": "janedoe", "role": "patient"}
+        ]
+      }
+    }
+  ]
+}

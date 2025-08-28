@@ -55,7 +55,7 @@ MIDDLEWARE = [
     
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'smartqueue.security_middleware.SecurityMiddleware',  # Custom security middleware
+   
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -171,13 +171,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
-# Redirect URLs after login/logout
-LOGIN_REDIRECT_URL = "/"  # Redirect to home after successful login
-LOGOUT_REDIRECT_URL = "/"  # Redirect to home after logout
-
-# =============================================================================
-# SECURITY SETTINGS
-# =============================================================================
 
 # SECURITY WARNING: In production, set DEBUG = False and configure ALLOWED_HOSTS
 DEBUG = True  # Set to False in production for security

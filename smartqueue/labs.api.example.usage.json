@@ -1,0 +1,165 @@
+{
+  "examples": [
+    {
+      "endpoint": "/labs/tests/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "params": {"patient_id": 1, "status": "ordered"}
+      },
+      "response": {
+        "status": 200,
+        "body": [
+          {
+            "id": 101,
+            "patient": {"id": 1, "name": "John Doe"},
+            "test_type": "blood_count",
+            "status": "ordered",
+            "priority": "routine",
+            "ordered_by": {"id": 5, "name": "Dr. Smith"},
+            "lab_department": {"id": 2, "name": "Hematology"}
+          }
+        ]
+      }
+    },
+    {
+      "endpoint": "/labs/tests/order/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "body": {
+          "patient_id": 1,
+          "test_type": "blood_count",
+          "priority": "stat",
+          "clinical_notes": "Urgent test required",
+          "queue_entry_id": 55
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": {
+          "id": 102,
+          "patient": {"id": 1, "name": "John Doe"},
+          "test_type": "blood_count",
+          "status": "scheduled",
+          "priority": "stat",
+          "ordered_by": {"id": 5, "name": "Dr. Smith"},
+          "lab_department": {"id": 2, "name": "Hematology"}
+        }
+      }
+    },
+    {
+      "endpoint": "/labs/tests/102/start/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "body": {"equipment_id": 7}
+      },
+      "response": {
+        "status": 200,
+        "body": {"message": "Test started successfully"}
+      }
+    },
+    {
+      "endpoint": "/labs/tests/102/complete/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "body": {
+          "results": "WBC: 5.2, RBC: 4.7",
+          "normal_ranges": {"WBC": "4.0-10.0", "RBC": "4.0-6.0"},
+          "abnormal_flags": []
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": {"message": "Test completed successfully"}
+      }
+    },
+    {
+      "endpoint": "/labs/tests/102/review/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "body": {"approved": true}
+      },
+      "response": {
+        "status": 200,
+        "body": {"message": "Test reviewed successfully"}
+      }
+    },
+    {
+      "endpoint": "/labs/departments/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": [
+          {"id": 2, "name": "Hematology", "is_open": true},
+          {"id": 3, "name": "Chemistry", "is_open": false}
+        ]
+      }
+    },
+    {
+      "endpoint": "/labs/schedules/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "params": {"date": "2025-08-28", "technician_id": 8}
+      },
+      "response": {
+        "status": 200,
+        "body": [
+          {
+            "id": 201,
+            "lab_test": {"id": 102, "test_type": "blood_count"},
+            "technician": {"id": 8, "name": "Jane Tech"},
+            "equipment": {"id": 7, "name": "Hematology Analyzer"},
+            "scheduled_date": "2025-08-28",
+            "scheduled_time": "09:00:00"
+          }
+        ]
+      }
+    },
+    {
+      "endpoint": "/labs/departments/2/analytics/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "lab_department": {"id": 2, "name": "Hematology"},
+          "analytics": [
+            {
+              "date": "2025-08-28",
+              "total_tests_ordered": 10,
+              "tests_completed": 8,
+              "tests_pending": 2,
+              "tests_overdue": 0,
+              "avg_turnaround_time": 2.5,
+              "avg_processing_time": 45,
+              "stat_tests": 2,
+              "urgent_tests": 3,
+              "routine_tests": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "endpoint": "/labs/maintenance/run/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"message": "Lab maintenance tasks completed successfully"}
+      }
+    }
+  ]
+}

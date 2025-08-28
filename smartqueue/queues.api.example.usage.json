@@ -1,0 +1,131 @@
+{
+  "examples": [
+    {
+      "endpoint": "/queues/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": [
+          {"id": 1, "name": "General Queue", "status": "open"},
+          {"id": 2, "name": "Lab Queue", "status": "open"}
+        ]
+      }
+    },
+    {
+      "endpoint": "/queues/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "body": {"name": "Pharmacy Queue", "status": "open"}
+      },
+      "response": {
+        "status": 201,
+        "body": {"id": 3, "name": "Pharmacy Queue", "status": "open"}
+      }
+    },
+    {
+      "endpoint": "/queues/join/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "body": {"queue_id": 2, "priority": "high"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"entry_id": 101, "queue_id": 2, "status": "waiting", "position": 3}
+      }
+    },
+    {
+      "endpoint": "/queues/wait-time/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "params": {"queue_id": 2}
+      },
+      "response": {
+        "status": 200,
+        "body": {"queue_id": 2, "estimated_wait_time": 15}
+      }
+    },
+    {
+      "endpoint": "/queues/my-entries/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": [
+          {"entry_id": 101, "queue_id": 2, "status": "waiting", "position": 3},
+          {"entry_id": 102, "queue_id": 1, "status": "completed", "position": null}
+        ]
+      }
+    },
+    {
+      "endpoint": "/queues/2/call-next/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"entry_id": 101, "patient": {"id": 1, "name": "John Doe"}, "message": "Next patient called"}
+      }
+    },
+    {
+      "endpoint": "/queues/entry/101/complete/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"entry_id": 101, "status": "completed"}
+      }
+    },
+    {
+      "endpoint": "/queues/entry/101/send-to-lab/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"entry_id": 101, "status": "sent_to_lab"}
+      }
+    },
+    {
+      "endpoint": "/queues/2/analytics/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "queue_id": 2,
+          "total_entries": 30,
+          "waiting": 10,
+          "in_progress": 5,
+          "completed": 15,
+          "avg_wait_time": 14.2,
+          "max_wait_time": 28
+        }
+      }
+    },
+    {
+      "endpoint": "/queues/maintenance/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"message": "Queue maintenance tasks completed successfully"}
+      }
+    }
+  ]
+}

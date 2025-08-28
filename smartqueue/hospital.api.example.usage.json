@@ -1,0 +1,90 @@
+{
+  "examples": [
+    {
+      "endpoint": "/hospital/departments/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": [
+          {"id": 1, "name": "Cardiology", "is_active": true},
+          {"id": 2, "name": "Radiology", "is_active": true}
+        ]
+      }
+    },
+    {
+      "endpoint": "/hospital/departments/1/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"id": 1, "name": "Cardiology", "is_active": true, "description": "Heart care department"}
+      }
+    },
+    {
+      "endpoint": "/hospital/departments/create/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "body": {"name": "Oncology", "description": "Cancer treatment", "is_active": true}
+      },
+      "response": {
+        "status": 201,
+        "body": {"id": 3, "name": "Oncology", "is_active": true, "description": "Cancer treatment"}
+      }
+    },
+    {
+      "endpoint": "/hospital/departments/1/update/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "body": {"name": "Cardiology & Vascular", "is_active": true}
+      },
+      "response": {
+        "status": 200,
+        "body": {"id": 1, "name": "Cardiology & Vascular", "is_active": true}
+      }
+    },
+    {
+      "endpoint": "/hospital/staff/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"},
+        "params": {"department": 1}
+      },
+      "response": {
+        "status": 200,
+        "body": [
+          {"id": 10, "name": "Dr. Smith", "role": "doctor", "department": 1},
+          {"id": 11, "name": "Nurse Joy", "role": "nurse", "department": 1}
+        ]
+      }
+    },
+    {
+      "endpoint": "/hospital/staff/10/",
+      "method": "GET",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"id": 10, "name": "Dr. Smith", "role": "doctor", "department": 1, "on_break": false}
+      }
+    },
+    {
+      "endpoint": "/hospital/staff/10/break/",
+      "method": "POST",
+      "request": {
+        "headers": {"Authorization": "Bearer <token>"}
+      },
+      "response": {
+        "status": 200,
+        "body": {"id": 10, "on_break": true, "message": "Break status toggled"}
+      }
+    }
+  ]
+}

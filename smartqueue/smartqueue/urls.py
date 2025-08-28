@@ -22,11 +22,15 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    
     path('admin/', admin.site.urls),
     path('api/auth/', include('users.urls')),
-
-    path('api/departments/', include('departments.urls')),
+    path('api/hospital/', include('hospital.urls')),
     path('api/queues/', include('queues.urls')),
-    path('__debug__/', include(debug_toolbar.urls)),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('api/labs/', include('labs.urls')),
+    path('api/notifications/', include('notifications.urls')),
+]
+
+if settings.DEBUG:
+    urlpatterns += [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
