@@ -556,3 +556,45 @@ Traceback (most recent call last):
     return super().execute(query, params)
            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
 django.db.utils.OperationalError: no such table: notifications_notificationlog
+ERROR 2025-08-28 19:06:11,495 log 9368 18420 Internal Server Error: /api/auth/users
+Traceback (most recent call last):
+  File "C:\Users\ModernTech\.virtualenvs\Hospital_Queue_Management_API-LziE1Wer\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\ModernTech\.virtualenvs\Hospital_Queue_Management_API-LziE1Wer\Lib\site-packages\django\utils\deprecation.py", line 131, in __call__
+    response = self.process_response(request, response)
+  File "C:\Users\ModernTech\.virtualenvs\Hospital_Queue_Management_API-LziE1Wer\Lib\site-packages\django\middleware\common.py", line 108, in process_response
+    return self.response_redirect_class(self.get_full_path_with_slash(request))
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ModernTech\.virtualenvs\Hospital_Queue_Management_API-LziE1Wer\Lib\site-packages\django\middleware\common.py", line 87, in get_full_path_with_slash
+    raise RuntimeError(
+    ...<9 lines>...
+    )
+RuntimeError: You called this URL via POST, but the URL doesn't end in a slash and you have APPEND_SLASH set. Django can't redirect to the slash URL while maintaining POST data. Change your form to point to localhost:8000/api/auth/users/ (note the trailing slash), or set APPEND_SLASH=False in your Django settings.
+ERROR 2025-08-28 19:11:44,149 log 9368 10556 Internal Server Error: /api/auth/users
+Traceback (most recent call last):
+  File "C:\Users\ModernTech\.virtualenvs\Hospital_Queue_Management_API-LziE1Wer\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\ModernTech\.virtualenvs\Hospital_Queue_Management_API-LziE1Wer\Lib\site-packages\django\utils\deprecation.py", line 131, in __call__
+    response = self.process_response(request, response)
+  File "C:\Users\ModernTech\.virtualenvs\Hospital_Queue_Management_API-LziE1Wer\Lib\site-packages\django\middleware\common.py", line 108, in process_response
+    return self.response_redirect_class(self.get_full_path_with_slash(request))
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ModernTech\.virtualenvs\Hospital_Queue_Management_API-LziE1Wer\Lib\site-packages\django\middleware\common.py", line 87, in get_full_path_with_slash
+    raise RuntimeError(
+    ...<9 lines>...
+    )
+RuntimeError: You called this URL via POST, but the URL doesn't end in a slash and you have APPEND_SLASH set. Django can't redirect to the slash URL while maintaining POST data. Change your form to point to localhost:8000/api/auth/users/ (note the trailing slash), or set APPEND_SLASH=False in your Django settings.
+ERROR 2025-08-28 19:12:10,759 log 9368 11172 Internal Server Error: /api/auth/users
+Traceback (most recent call last):
+  File "C:\Users\ModernTech\.virtualenvs\Hospital_Queue_Management_API-LziE1Wer\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\ModernTech\.virtualenvs\Hospital_Queue_Management_API-LziE1Wer\Lib\site-packages\django\utils\deprecation.py", line 131, in __call__
+    response = self.process_response(request, response)
+  File "C:\Users\ModernTech\.virtualenvs\Hospital_Queue_Management_API-LziE1Wer\Lib\site-packages\django\middleware\common.py", line 108, in process_response
+    return self.response_redirect_class(self.get_full_path_with_slash(request))
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\ModernTech\.virtualenvs\Hospital_Queue_Management_API-LziE1Wer\Lib\site-packages\django\middleware\common.py", line 87, in get_full_path_with_slash
+    raise RuntimeError(
+    ...<9 lines>...
+    )
+RuntimeError: You called this URL via POST, but the URL doesn't end in a slash and you have APPEND_SLASH set. Django can't redirect to the slash URL while maintaining POST data. Change your form to point to localhost:8000/api/auth/users/ (note the trailing slash), or set APPEND_SLASH=False in your Django settings.

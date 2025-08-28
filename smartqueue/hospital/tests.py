@@ -1,7 +1,9 @@
+
 from django.test import TestCase
 from django.urls import reverse
 from .models import Department, Staff
 from django.contrib.auth import get_user_model
+from rest_framework.test import APIClient
 
 User = get_user_model()
 
@@ -33,8 +35,7 @@ class StaffModelTest(TestCase):
 		self.assertEqual(staff.department.name, "Cardiology")
 
 	# Removed duplicate/invalid setUp and tests
-class DepartmentAPITest(TestCase):
-from rest_framework.test import APIClient
+
 class DepartmentAPITest(TestCase):
 	def setUp(self):
 		self.client = APIClient()

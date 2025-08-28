@@ -57,6 +57,7 @@ class UserAPITest(TestCase):
 			"password_confirm": "patpass123",
 			"role": "patient"
 		}
+		self.client.credentials()  # Clear any existing authentication
 		reg_resp = self.client.post(reg_url, data, format='json')
 		self.assertEqual(reg_resp.status_code, 201)
 		token = reg_resp.data['access']

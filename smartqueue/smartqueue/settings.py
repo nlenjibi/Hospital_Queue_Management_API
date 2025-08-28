@@ -160,9 +160,9 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',  # Throttle for anonymous users
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'user': '100/hour',  # 100 requests/hour for authenticated users
-        'anon': '5/hour',    # 5 requests/hour for non-logged-in users
-        'queue_join': '3/hour',  # 3 requests/hour to join a queue
+        'user': '300/hour',  # 300 requests/hour for authenticated users
+        'anon': '50/hour',    # 50 requests/hour for non-logged-in users
+        'queue_join': '10/hour',  # 10 requests/hour to join a queue
     },
      'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',

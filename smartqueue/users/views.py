@@ -8,13 +8,14 @@ from django.contrib.auth import authenticate
 from .models import User, Patient
 from .serializers import UserRegistrationSerializer, LoginSerializer, UserSerializer, PatientSerializer
 from rest_framework.decorators import action
+from rest_framework.views import APIView
 import users.permissions as custom_permissions
 # Throttles
 class RegisterThrottle(UserRateThrottle):
-    rate = '10/min'
+    rate = '20/min'
 
 class LoginThrottle(UserRateThrottle):
-    rate = '10/min'
+    rate = '20/min'
 
 # Registration View
 class RegisterView(generics.CreateAPIView):
@@ -90,3 +91,14 @@ class UserDetailView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, custom_permissions.IsSelfOrAdmin]
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh")
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"detail": "Logout successful."}, status=status.HTTP_205_RESET_CONTENT)
+        except Exception:
+            return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
